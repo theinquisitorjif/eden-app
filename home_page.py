@@ -524,28 +524,58 @@ def home_page():
         auth = None # Initialize auth outside the if/else for consistent scope
 
         if not st.session_state.auth_status:
+            import socket
+            def is_localhost():
+                try:
+                    hostname = socket.gethostname()
+                    local_ip = socket.gethostbyname(hostname)
+                    return local_ip.startswith("127.") or local_ip == "localhost"
+                except:
+                    return False
+
             with st.expander("Earthdata Login"):
                 st.markdown("""
                 If you do not have an Earthdata account, you can create one for free at:
                 [Register for Earthdata Login](https://urs.earthdata.nasa.gov/users/new)
-
-                **How to Log In:**
-                1. Click the button below to log in to NASA Earthdata. A browser window will open for you to enter your credentials and authorize access.
-                2. After successful login, return to this app to access satellite data.
                 """)
-                st.info("A browser window will open for NASA Earthdata login and authorization. After completing login, return to this app.")
-                if st.button("Log in to Earthdata", key="interactive_login_btn"):
-                    try:
-                        auth = earthaccess.login(strategy="interactive", persist=True)
-                        if auth:
-                            st.success("Authenticated with Earthdata. You can now access satellite data.")
-                            st.session_state.auth_status = True
-                        else:
-                            st.error("Earthdata login failed. Please check your credentials or .netrc file.")
+                if is_localhost():
+                    st.markdown("""
+                    **How to Log In (Local):**
+                    1. Click the button below to log in to NASA Earthdata. A browser window will open for you to enter your credentials and authorize access.
+                    2. After successful login, return to this app to access satellite data.
+                    """)
+                    st.info("A browser window will open for NASA Earthdata login and authorization. After completing login, return to this app.")
+                    if st.button("Log in to Earthdata", key="interactive_login_btn"):
+                        try:
+                            auth = earthaccess.login(strategy="interactive", persist=True)
+                            if auth:
+                                st.success("Authenticated with Earthdata. You can now access satellite data.")
+                                st.session_state.auth_status = True
+                            else:
+                                st.error("Earthdata login failed. Please check your credentials or .netrc file.")
+                                st.session_state.auth_status = False
+                        except Exception as e:
+                            st.error(f"Earthdata login failed: {e}")
                             st.session_state.auth_status = False
-                    except Exception as e:
-                        st.error(f"Earthdata login failed: {e}")
-                        st.session_state.auth_status = False
+                else:
+                    st.markdown("""
+                    **How to Log In (Remote/Cloud):**
+                    1. Set up a `.netrc` file or environment variables as described in the [Earthaccess documentation](https://nsidc.github.io/earthaccess/).
+                    2. Click the button below to authenticate and access satellite data.
+                    """)
+                    st.info("For remote/cloud deployments, interactive login is not supported. Please use .netrc or environment variables.")
+                    if st.button("Silent Login to Earthdata", key="silent_login_btn"):
+                        try:
+                            auth = earthaccess.login(strategy="environment")
+                            if auth:
+                                st.success("Authenticated with Earthdata using environment credentials. You can now access satellite data.")
+                                st.session_state.auth_status = True
+                            else:
+                                st.error("Silent authentication failed. Please check your .netrc file or environment variables.")
+                                st.session_state.auth_status = False
+                        except Exception as e:
+                            st.error(f"Silent authentication failed: {e}")
+                            st.session_state.auth_status = False
         else:
             st.success("You are logged in to Earthdata.")
 
