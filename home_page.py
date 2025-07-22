@@ -262,6 +262,14 @@ def home_page():
         body, .stApp, .stMarkdown, .stText, .stHeader, .stSubheader, .stTitle, .stCaption, .stDataFrame, .stTable, .stAlert, .stRadio, .stSelectbox, .stButton, .stFileUploader, .stTextInput, .stNumberInput {
             color: #111 !important;
         }
+        /* Force all labels, radio/select options, and expander headers to black for visibility */
+        label, .stRadio>label, .stSelectbox>label, .stRadio div[role="radiogroup"] label, .stSelectbox div[role="listbox"] span, .streamlit-expanderHeader {
+            color: #111 !important;
+        }
+        /* Also force text inside input fields and buttons to black */
+        input, button, textarea {
+            color: #111 !important;
+        }
         </style>
     """, unsafe_allow_html=True)
     # Navigation bar removed as requested
