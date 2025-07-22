@@ -525,40 +525,46 @@ def home_page():
 
         if not st.session_state.auth_status:
             with st.expander("Enter Earthdata Credentials (Optional, for restricted datasets)"):
+                st.markdown("""
+                If you do not have an Earthdata account, you can create one for free at:
+                [Register for Earthdata Login](https://urs.earthdata.nasa.gov/users/new)
+                """)
                 earthdata_username = st.text_input("Earthdata Username", key="ed_user")
                 earthdata_password = st.text_input("Earthdata Password", type="password", key="ed_pass")
-                if st.button("Log In to Earthdata"):
+                login_clicked = st.button("Log In to Earthdata")
+                if login_clicked:
                     if earthdata_username and earthdata_password:
                         try:
                             auth = earthaccess.login(strategy="reauth", persist=True,
                                                     username=earthdata_username, password=earthdata_password)
-                            st.success("Authenticated with Earthdata. You might be prompted in your browser to authorize.")
-                            st.session_state.auth_status = True
+                            if auth:
+                                st.success("Authenticated with Earthdata. You might be prompted in your browser to authorize.")
+                                st.session_state.auth_status = True
+                            else:
+                                st.error("Earthdata login failed. Please check your credentials or .netrc file.")
+                                st.session_state.auth_status = False
                         except Exception as e:
                             st.error(f"Earthdata login failed: {e}. Please check your credentials or .netrc file.")
                             st.session_state.auth_status = False
                     else:
                         st.warning("Please enter both username and password.")
-                else:
-                    # Try silent login if not explicitly logged in via button
-                    try:
-                        auth = earthaccess.login(strategy="environment") # Tries .netrc, env vars etc.
-                        if auth: # Check if authentication was successful
-                            st.info("Attempting silent authentication with existing Earthdata credentials.")
-                            st.session_state.auth_status = True
-                        else:
-                            st.warning("Not authenticated. Some datasets may not be accessible. Enter credentials above or proceed for public data.")
-                            st.session_state.auth_status = False 
-                    except Exception:
-                        st.warning("Not authenticated. Some datasets may not be accessible. Enter credentials above or proceed for public data.")
-                        st.session_state.auth_status = False
+                # Always show status after login attempt
+                if not st.session_state.auth_status:
+                    st.info("If you have a .netrc file or environment credentials, you can try silent login below.")
+                    if st.button("Try Silent Login", key="silent_login_btn"):
+                        try:
+                            auth = earthaccess.login(strategy="environment")
+                            if auth:
+                                st.success("Authenticated with Earthdata using environment credentials.")
+                                st.session_state.auth_status = True
+                            else:
+                                st.error("Silent authentication failed. Please check your .netrc file or environment variables.")
+                                st.session_state.auth_status = False
+                        except Exception as e:
+                            st.error(f"Silent authentication failed: {e}")
+                            st.session_state.auth_status = False
         else:
             st.success("You are logged in to Earthdata.")
-            try:
-                auth = earthaccess.login(strategy="environment") # Re-get auth object for current session
-            except Exception as e:
-                st.error(f"Could not re-establish Earthdata session: {e}. You may need to log in again.")
-                st.session_state.auth_status = False
 
         # --- Dynamic Dataset Discovery Section ---
         st.subheader("1. Find Satellite Datasets")
