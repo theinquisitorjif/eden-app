@@ -259,7 +259,7 @@ def home_page():
     # Universal CSS for black text readability
     st.markdown("""
         <style>
-        body, .stApp, .stMarkdown, .stText, .stHeader, .stSubheader, .stTitle, .stCaption, .stDataFrame, .stTable, .stAlert, .stRadio, .stSelectbox, .stButton, .stFileUploader, .stTextInput, .stNumberInput {
+        body, .stApp, .stMarkdown, .stText, .stHeader, .stSubheader, .stTitle, .stCaption, .stDataFrame, .stTable, .stAlert, .stRadio, .stSelectbox, .stTextInput, .stNumberInput {
             color: #111 !important;
         }
         /* Force all labels, radio/select options, and expander headers to black for visibility */
@@ -267,8 +267,12 @@ def home_page():
             color: #111 !important;
         }
         /* Also force text inside input fields and buttons to black */
-        input, button, textarea {
+        input, textarea {
             color: #111 !important;
+        }
+        /* Restore original color for file uploader button */
+        .stFileUploader > label, .stButton > button {
+            color: initial !important;
         }
         </style>
     """, unsafe_allow_html=True)
