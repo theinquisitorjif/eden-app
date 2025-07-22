@@ -371,6 +371,17 @@ def home_page():
     )
 
     st.title("Welcome to EDEN AI - Aquatic Environmental Intelligence")
+    st.markdown("""
+    ### Quick Start Guide
+    1. **Upload Data:** Use the sidebar to upload your aquatic dataset (CSV, JSON, XLSX, NC, HDF) or import satellite data via Earthdata API.
+    2. **Preview & Clean:** View, rename, and clean your data directly in the app.
+    3. **Visualize:** Explore geospatial maps and scatter plots of your data.
+    4. **Analyze:** Use the Predict page to train models and forecast marine events.
+    5. **Download:** Export processed data and reports for further use.
+
+    ---
+    **We value your feedback!** Please email your suggestions or issues to [jarellfelix@alarextech.com](mailto:jarellfelix@alarextech.com).
+    """)
     st.write("This application provides comprehensive intelligence for aquatic environments, combining time-series and satellite data.")
 
     st.write("You can upload your data or select options to proceed.")
