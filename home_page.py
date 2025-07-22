@@ -547,15 +547,15 @@ def home_page():
                     st.info("A browser window will open for NASA Earthdata login and authorization. After completing login, return to this app.")
                     if st.button("Log in to Earthdata", key="interactive_login_btn"):
                         try:
-                            auth = earthaccess.login(strategy="interactive", persist=True)
+                            auth = earthaccess.authenticate()
                             if auth:
                                 st.success("Authenticated with Earthdata. You can now access satellite data.")
                                 st.session_state.auth_status = True
                             else:
-                                st.error("Earthdata login failed. Please check your credentials or .netrc file.")
+                                st.error("Earthdata authentication failed. Please check your credentials or .netrc file.")
                                 st.session_state.auth_status = False
                         except Exception as e:
-                            st.error(f"Earthdata login failed: {e}")
+                            st.error(f"Earthdata authentication failed: {e}")
                             st.session_state.auth_status = False
                 else:
                     st.markdown("""
