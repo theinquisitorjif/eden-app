@@ -547,7 +547,7 @@ def home_page():
                     st.info("A browser window will open for NASA Earthdata login and authorization. After completing login, return to this app.")
                     if st.button("Log in to Earthdata", key="interactive_login_btn"):
                         try:
-                            auth = earthaccess.authenticate()
+                            auth = earthaccess.login(strategy="interactive")
                             if auth:
                                 st.success("Authenticated with Earthdata. You can now access satellite data.")
                                 st.session_state.auth_status = True
