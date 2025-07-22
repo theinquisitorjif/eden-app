@@ -529,16 +529,20 @@ def home_page():
                 If you do not have an Earthdata account, you can create one for free at:
                 [Register for Earthdata Login](https://urs.earthdata.nasa.gov/users/new)
 
-                **Authentication Options:**
-                - Use the **Interactive Login** button below to log in via your browser (recommended).
-                - Or, set up a `.netrc` file or environment variables for silent authentication.
+                **How to Log In:**
+                1. Click the button below to open the NASA Earthdata Login page in a new browser tab.
+                2. Log in with your Earthdata credentials and authorize the app.
+                3. Return to this app and click **Continue** below to complete authentication and access satellite data.
                 """)
-                login_clicked = st.button("Interactive Login to Earthdata")
-                if login_clicked:
+                earthdata_login_url = "https://urs.earthdata.nasa.gov/oauth/authorize"
+                st.markdown(f"<a href='{earthdata_login_url}' target='_blank'><button style='background-color:#00796b;color:white;padding:8px 16px;border:none;border-radius:5px;'>Go to NASA Earthdata Login</button></a>", unsafe_allow_html=True)
+                st.info("After logging in and authorizing, return here and click Continue.")
+                continue_clicked = st.button("Continue (Complete Authentication)")
+                if continue_clicked:
                     try:
                         auth = earthaccess.login(strategy="interactive", persist=True)
                         if auth:
-                            st.success("Authenticated with Earthdata. You might be prompted in your browser to authorize.")
+                            st.success("Authenticated with Earthdata. You can now access satellite data.")
                             st.session_state.auth_status = True
                         else:
                             st.error("Earthdata login failed. Please check your credentials or .netrc file.")
