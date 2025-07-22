@@ -534,20 +534,18 @@ def home_page():
                 login_clicked = st.button("Log In to Earthdata")
                 if login_clicked:
                     if earthdata_username and earthdata_password:
-                        try:
-                            auth = earthaccess.login(strategy="reauth", persist=True,
-                                                    username=earthdata_username, password=earthdata_password)
-                            if auth:
-                                st.success("Authenticated with Earthdata. You might be prompted in your browser to authorize.")
-                                st.session_state.auth_status = True
-                            else:
-                                st.error("Earthdata login failed. Please check your credentials or .netrc file.")
-                                st.session_state.auth_status = False
-                        except Exception as e:
-                            st.error(f"Earthdata login failed: {e}. Please check your credentials or .netrc file.")
+                        st.info("Earthaccess does not support direct username/password login in code. Please use the interactive login below or set up a .netrc file or environment variables.")
+                    try:
+                        auth = earthaccess.login(strategy="interactive", persist=True)
+                        if auth:
+                            st.success("Authenticated with Earthdata. You might be prompted in your browser to authorize.")
+                            st.session_state.auth_status = True
+                        else:
+                            st.error("Earthdata login failed. Please check your credentials or .netrc file.")
                             st.session_state.auth_status = False
-                    else:
-                        st.warning("Please enter both username and password.")
+                    except Exception as e:
+                        st.error(f"Earthdata login failed: {e}. Please check your credentials or .netrc file.")
+                        st.session_state.auth_status = False
                 # Always show status after login attempt
                 if not st.session_state.auth_status:
                     st.info("If you have a .netrc file or environment credentials, you can try silent login below.")
