@@ -256,6 +256,14 @@ def process_satellite_data_to_florida_df(file_path):
 
 def home_page():
     st.set_page_config(page_title="EDEN AI Home", page_icon=":earth_africa:", layout="wide")
+    # Universal CSS for black text readability
+    st.markdown("""
+        <style>
+        body, .stApp, .stMarkdown, .stText, .stHeader, .stSubheader, .stTitle, .stCaption, .stDataFrame, .stTable, .stAlert, .stRadio, .stSelectbox, .stButton, .stFileUploader, .stTextInput, .stNumberInput {
+            color: #111 !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
     # Navigation bar removed as requested
 
     # --- Custom CSS for Aquatic Theme ---
