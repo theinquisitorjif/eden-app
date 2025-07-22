@@ -524,21 +524,17 @@ def home_page():
         auth = None # Initialize auth outside the if/else for consistent scope
 
         if not st.session_state.auth_status:
-            with st.expander("Earthdata Login Options"):
+            with st.expander("Earthdata Login"):
                 st.markdown("""
                 If you do not have an Earthdata account, you can create one for free at:
                 [Register for Earthdata Login](https://urs.earthdata.nasa.gov/users/new)
 
                 **How to Log In:**
-                1. Click the button below to open the NASA Earthdata Login page in a new browser tab.
-                2. Log in with your Earthdata credentials and authorize the app.
-                3. Return to this app and click **Continue** below to complete authentication and access satellite data.
+                1. Click the button below to log in to NASA Earthdata. A browser window will open for you to enter your credentials and authorize access.
+                2. After successful login, return to this app to access satellite data.
                 """)
-                earthdata_login_url = "https://urs.earthdata.nasa.gov/oauth/authorize"
-                st.markdown(f"<a href='{earthdata_login_url}' target='_blank'><button style='background-color:#00796b;color:white;padding:8px 16px;border:none;border-radius:5px;'>Go to NASA Earthdata Login</button></a>", unsafe_allow_html=True)
-                st.info("After logging in and authorizing, return here and click Continue.")
-                continue_clicked = st.button("Continue (Complete Authentication)")
-                if continue_clicked:
+                st.info("A browser window will open for NASA Earthdata login and authorization. After completing login, return to this app.")
+                if st.button("Log in to Earthdata", key="interactive_login_btn"):
                     try:
                         auth = earthaccess.login(strategy="interactive", persist=True)
                         if auth:
@@ -548,23 +544,8 @@ def home_page():
                             st.error("Earthdata login failed. Please check your credentials or .netrc file.")
                             st.session_state.auth_status = False
                     except Exception as e:
-                        st.error(f"Earthdata login failed: {e}. Please check your credentials or .netrc file.")
+                        st.error(f"Earthdata login failed: {e}")
                         st.session_state.auth_status = False
-                # Always show status after login attempt
-                if not st.session_state.auth_status:
-                    st.info("If you have a .netrc file or environment credentials, you can try silent login below.")
-                    if st.button("Try Silent Login", key="silent_login_btn"):
-                        try:
-                            auth = earthaccess.login(strategy="environment")
-                            if auth:
-                                st.success("Authenticated with Earthdata using environment credentials.")
-                                st.session_state.auth_status = True
-                            else:
-                                st.error("Silent authentication failed. Please check your .netrc file or environment variables.")
-                                st.session_state.auth_status = False
-                        except Exception as e:
-                            st.error(f"Silent authentication failed: {e}")
-                            st.session_state.auth_status = False
         else:
             st.success("You are logged in to Earthdata.")
 
