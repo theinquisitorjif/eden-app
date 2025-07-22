@@ -1,0 +1,12 @@
+streamlit
+pandas
+numpy
+scikit-learn
+matplotlib
+fpdf
+xarray
+netCDF4
+h5netcdf
+pyhdf
+earthaccess
+seaborn
