@@ -524,17 +524,17 @@ def home_page():
         auth = None # Initialize auth outside the if/else for consistent scope
 
         if not st.session_state.auth_status:
-            with st.expander("Enter Earthdata Credentials (Optional, for restricted datasets)"):
+            with st.expander("Earthdata Login Options"):
                 st.markdown("""
                 If you do not have an Earthdata account, you can create one for free at:
                 [Register for Earthdata Login](https://urs.earthdata.nasa.gov/users/new)
+
+                **Authentication Options:**
+                - Use the **Interactive Login** button below to log in via your browser (recommended).
+                - Or, set up a `.netrc` file or environment variables for silent authentication.
                 """)
-                earthdata_username = st.text_input("Earthdata Username", key="ed_user")
-                earthdata_password = st.text_input("Earthdata Password", type="password", key="ed_pass")
-                login_clicked = st.button("Log In to Earthdata")
+                login_clicked = st.button("Interactive Login to Earthdata")
                 if login_clicked:
-                    if earthdata_username and earthdata_password:
-                        st.info("Earthaccess does not support direct username/password login in code. Please use the interactive login below or set up a .netrc file or environment variables.")
                     try:
                         auth = earthaccess.login(strategy="interactive", persist=True)
                         if auth:
